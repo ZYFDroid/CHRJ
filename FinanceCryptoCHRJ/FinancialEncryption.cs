@@ -54,8 +54,8 @@ namespace FinanceCrypto
         }
 
         private const string pool = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        Random rnd = new Random();
-        private String randomMask() {
+        private static Random rnd = new Random();
+        public static String randomMask() {
             String mask = "";
             for (int i = 0; i < 16; i++)
             {

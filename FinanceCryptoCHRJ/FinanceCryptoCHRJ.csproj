@@ -33,7 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject />
+    <StartupObject>FinanceCryptoCHRJ.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>flatlogo_cmd_dice_5.ico</ApplicationIcon>
@@ -78,6 +78,12 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmAddTask.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmAddTask.designer.cs">
+      <DependentUpon>FrmAddTask.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmEdit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -98,6 +104,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmAddTask.resx">
+      <DependentUpon>FrmAddTask.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmEdit.resx">
       <DependentUpon>FrmEdit.cs</DependentUpon>

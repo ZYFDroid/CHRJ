@@ -42,16 +42,16 @@
             this.btnSlot6 = new System.Windows.Forms.Button();
             this.renderTimer = new System.Windows.Forms.Timer(this.components);
             this.displayArea = new System.Windows.Forms.Label();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.btnRemoveCurrent = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnReload = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnSecurityCheck = new System.Windows.Forms.ToolStripMenuItem();
+            this.chkHasBgm = new System.Windows.Forms.ToolStripMenuItem();
             this.areaTopBar = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.areaFPS = new System.Windows.Forms.Label();
             this.borderDockTimer = new System.Windows.Forms.Timer(this.components);
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.btnSecurityCheck = new System.Windows.Forms.ToolStripMenuItem();
-            this.chkHasBgm = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnReload = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnRemoveCurrent = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -221,13 +221,57 @@
             // 
             this.displayArea.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.displayArea.ContextMenuStrip = this.contextMenuStrip1;
-            this.displayArea.Location = new System.Drawing.Point(22, 66);
+            this.displayArea.Location = new System.Drawing.Point(22, 65);
             this.displayArea.Name = "displayArea";
-            this.displayArea.Size = new System.Drawing.Size(559, 138);
+            this.displayArea.Size = new System.Drawing.Size(559, 139);
             this.displayArea.TabIndex = 3;
             this.displayArea.MouseDown += new System.Windows.Forms.MouseEventHandler(this.canvas_MouseDown);
             this.displayArea.MouseMove += new System.Windows.Forms.MouseEventHandler(this.canvas_MouseMove);
             this.displayArea.MouseUp += new System.Windows.Forms.MouseEventHandler(this.canvas_MouseUp);
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnRemoveCurrent,
+            this.btnReload,
+            this.toolStripSeparator1,
+            this.btnSecurityCheck,
+            this.chkHasBgm});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(166, 120);
+            // 
+            // btnRemoveCurrent
+            // 
+            this.btnRemoveCurrent.Name = "btnRemoveCurrent";
+            this.btnRemoveCurrent.Size = new System.Drawing.Size(165, 22);
+            this.btnRemoveCurrent.Text = "移除当前";
+            this.btnRemoveCurrent.Click += new System.EventHandler(this.btnRemoveCurrent_Click);
+            // 
+            // btnReload
+            // 
+            this.btnReload.Name = "btnReload";
+            this.btnReload.Size = new System.Drawing.Size(165, 22);
+            this.btnReload.Text = "重置摇号";
+            this.btnReload.Click += new System.EventHandler(this.btnReload_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(162, 6);
+            // 
+            // btnSecurityCheck
+            // 
+            this.btnSecurityCheck.Name = "btnSecurityCheck";
+            this.btnSecurityCheck.Size = new System.Drawing.Size(165, 22);
+            this.btnSecurityCheck.Text = "安全校验";
+            this.btnSecurityCheck.Click += new System.EventHandler(this.btnSecurityCheck_Click);
+            // 
+            // chkHasBgm
+            // 
+            this.chkHasBgm.CheckOnClick = true;
+            this.chkHasBgm.Name = "chkHasBgm";
+            this.chkHasBgm.Size = new System.Drawing.Size(165, 22);
+            this.chkHasBgm.Text = "开启欢乐的BGM";
             // 
             // areaTopBar
             // 
@@ -266,47 +310,6 @@
             this.borderDockTimer.Enabled = true;
             this.borderDockTimer.Interval = 10;
             this.borderDockTimer.Tick += new System.EventHandler(this.borderDockTimer_Tick);
-            // 
-            // contextMenuStrip1
-            // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnRemoveCurrent,
-            this.btnReload,
-            this.toolStripSeparator1,
-            this.btnSecurityCheck,
-            this.chkHasBgm});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(166, 98);
-            // 
-            // btnSecurityCheck
-            // 
-            this.btnSecurityCheck.Name = "btnSecurityCheck";
-            this.btnSecurityCheck.Size = new System.Drawing.Size(165, 22);
-            this.btnSecurityCheck.Text = "安全校验";
-            // 
-            // chkHasBgm
-            // 
-            this.chkHasBgm.CheckOnClick = true;
-            this.chkHasBgm.Name = "chkHasBgm";
-            this.chkHasBgm.Size = new System.Drawing.Size(165, 22);
-            this.chkHasBgm.Text = "开启欢乐的BGM";
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(162, 6);
-            // 
-            // btnReload
-            // 
-            this.btnReload.Name = "btnReload";
-            this.btnReload.Size = new System.Drawing.Size(165, 22);
-            this.btnReload.Text = "重置摇号";
-            // 
-            // btnRemoveCurrent
-            // 
-            this.btnRemoveCurrent.Name = "btnRemoveCurrent";
-            this.btnRemoveCurrent.Size = new System.Drawing.Size(165, 22);
-            this.btnRemoveCurrent.Text = "移除当前";
             // 
             // Form1
             // 

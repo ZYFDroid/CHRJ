@@ -40,6 +40,8 @@ namespace FinanceCryptoCHRJ
 
         float absvel = 0;
 
+        int currentIndex = 0;
+
         bool requestBlask = false;
 
         Bitmap bg = Properties.Resources.chrj_bg1;
@@ -50,8 +52,8 @@ namespace FinanceCryptoCHRJ
             absvel = Math.Abs(velotry);
             DateTime now = DateTime.Now;
             Graphics canv = gdi.Graphics;
-            canv.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
-            //canv.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            canv.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+            canv.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             canv.Clear(Color.Transparent);
 
             #region Draw Names
@@ -145,11 +147,11 @@ namespace FinanceCryptoCHRJ
                 }
                 else
                 {
-                    int current = (int)Math.Round(position);
-                    while (current < 0) { current += lenint; }
-                    while (current >= lenint) { current -= lenint; }
-                    Text = current.ToString();
-                    if (velotry > 0.1 && nameDrawingItems[current].nameItem.isDisabled)
+                    currentIndex = (int)Math.Round(position);
+                    while (currentIndex < 0) { currentIndex += lenint; }
+                    while (currentIndex >= lenint) { currentIndex -= lenint; }
+                    
+                    if (absvel > 0.1 && nameDrawingItems[currentIndex].nameItem.isDisabled)
                     {
                         isDragging = false;
                     }
@@ -294,24 +296,35 @@ namespace FinanceCryptoCHRJ
         public class NameDrawingItem {
             public NameItem nameItem;
             Font drawingFont;
-            PointF beginPoint;
             float areaWidth = 0;
-
-
+            RectangleF drawingArea;
+            StringFormat drawingFormat = new StringFormat(StringFormatFlags.NoWrap)
+            {
+                Alignment = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center,
+                Trimming = StringTrimming.Character
+            };
 
             public NameDrawingItem(NameItem nameItem,Graphics g,int left,int top,int width,int height)
             {
+
                 this.nameItem = nameItem;
                 float beginFontSize = 50;
+                FontFamily usingFont = SystemFonts.DefaultFont.FontFamily;
+
+                
+                
+
                 bool inLoop = true;
-                SizeF strSize = g.MeasureString(nameItem.name, new Font(FontFamily.GenericSansSerif, beginFontSize));
+                SizeF strSize = g.MeasureString(nameItem.name, new Font(usingFont, beginFontSize));
                 if (strSize.Width <= width && strSize.Height <= height)
                 {
                     while (inLoop) {
                         beginFontSize++;
-                        strSize = g.MeasureString(nameItem.name, new Font(FontFamily.GenericSansSerif, beginFontSize));
+                        strSize = g.MeasureString(nameItem.name, new Font(usingFont, beginFontSize));
                         if (strSize.Width > width || strSize.Height > height) {
                             beginFontSize--;
+                            strSize = g.MeasureString(nameItem.name, new Font(usingFont, beginFontSize));
                             inLoop = false;
                         }
                     }
@@ -320,21 +333,22 @@ namespace FinanceCryptoCHRJ
                     while (inLoop)
                     {
                         beginFontSize--;
-                        strSize = g.MeasureString(nameItem.name, new Font(FontFamily.GenericSansSerif, beginFontSize));
+                        strSize = g.MeasureString(nameItem.name, new Font(usingFont, beginFontSize));
                         if (strSize.Width <= width && strSize.Height <= height)
                         {
                             inLoop = false;
                         }
                     }
                 }
-
-                drawingFont = new Font(FontFamily.GenericSansSerif, beginFontSize);
-                beginPoint = new PointF(width/2 - strSize.Width/2 + left,height/2 - strSize.Height/2+ top);
+                drawingFont = new Font(FontFamily.GenericSerif, beginFontSize);
                 areaWidth = width;
+                drawingArea = new RectangleF(0, top+14, width, height);
             }
 
             public void draw(Graphics g, float offset) {
-                g.DrawString(nameItem.name, drawingFont, Brushes.Black, beginPoint.X - areaWidth * offset, beginPoint.Y);
+                drawingArea.X = 0;
+                drawingArea.Offset(-areaWidth * offset, 0);
+                g.DrawString(nameItem.name, drawingFont, Brushes.Black, drawingArea, drawingFormat);
             }
         }
 
@@ -384,6 +398,10 @@ namespace FinanceCryptoCHRJ
                 
                 cryptor.setData(json, password);
                 File.WriteAllText(cfgPath, cryptor.exportToXml(), Encoding.UTF8);
+            }
+
+            for (int i = 0; i < appSettings.nameListCollections.Count; i++) {
+                selectionButtons[i].Text = appSettings.nameListCollections[i].name;
             }
 
             loadItems(appSettings.nameListCollections[selecting].items);
@@ -464,9 +482,21 @@ namespace FinanceCryptoCHRJ
         float deltaPosition = 0;
         private void canvas_MouseDown(object sender, MouseEventArgs e)
         {
-            isDragging = true;
-            lastPoint = e.Location;
-            deltaPosition = 0;
+            try
+            {
+                if (nameDrawingItems.Count <= 0) { return; }
+
+                if (absvel > 0.1 && nameDrawingItems[currentIndex].nameItem.isDisabled)
+                {
+                    isDragging = false;
+                }
+                isDragging = true;
+                lastPoint = e.Location;
+                deltaPosition = 0;
+            }
+            catch (Exception) {
+                isDragging = false;
+            }
         }
 
         private void canvas_MouseMove(object sender, MouseEventArgs e)
@@ -480,8 +510,11 @@ namespace FinanceCryptoCHRJ
 
         private void canvas_MouseUp(object sender, MouseEventArgs e)
         {
-            isDragging = false;
-            velotry = deltaPosition;
+            if (isDragging)
+            {
+                isDragging = false;
+                velotry = deltaPosition;
+            }
         }
 
         Random rnd = new Random();
@@ -543,8 +576,8 @@ namespace FinanceCryptoCHRJ
         }
 
         #endregion
-        
 
+        #region serurity
         private void btnSetting_Click(object sender, EventArgs e)
         {
             string password = FrmInputPassword.Input(this, "请输入密码");
@@ -578,8 +611,54 @@ namespace FinanceCryptoCHRJ
         }
 
         void openSetting(String password) {
+            this.TopMost = false;
+            this.renderTimer.Enabled = false;
+            this.borderDockTimer.Enabled = false;
             new FrmEdit(password).ShowDialog();
+            this.TopMost = true;
+            this.renderTimer.Enabled = true;
+            this.borderDockTimer.Enabled = true;
+            File.WriteAllText(cfgPath, cryptor.exportToXml(), Encoding.UTF8);
+            initItems();
         }
+
+        private void btnSecurityCheck_Click(object sender, EventArgs e)
+        {
+            string password = FrmInputPassword.Input(this, "请输入密码");
+            if (!cryptor.verifyPassword(password)) {
+                password = testSubPassword(password);
+            }
+            if (!cryptor.verifyPassword(password)) {
+                MessageBox.Show("密码错误");
+                return;
+            }
+            if (cryptor.verifyData(password))
+            {
+                MessageBox.Show("数据校验成功，可以放心使用");
+            }
+            else {
+                MessageBox.Show("数据校验失败，名单可能已经被篡改","警告",MessageBoxButtons.OK,MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnReload_Click(object sender, EventArgs e)
+        {
+            loadItems(appSettings.nameListCollections[selecting].items);
+        }
+
+        private void btnRemoveCurrent_Click(object sender, EventArgs e)
+        {
+            if (nameDrawingItems.Count > 0)
+            {
+                nameDrawingItems.RemoveAt(currentIndex);
+
+                if (nameDrawingItems.All(el => el.nameItem.isDisabled)) {
+                    nameDrawingItems.ForEach(el => el.nameItem.isDisabled = false);
+                }
+            }
+        }
+
+        #endregion
     }
 
 }
