@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Newtonsoft.Json;
+using NAudioPractice1;
 
 namespace FinanceCryptoCHRJ
 {
@@ -17,7 +20,14 @@ namespace FinanceCryptoCHRJ
             InitializeComponent();
         }
 
+        BSoundPlayer bgmPlayer;
+        String cfgPath = "config.dat";
+        int selecting = 0;
+        Button[] selectionButtons;
 
+        AppSettings appSettings = new AppSettings();
+
+        List<NameDrawingItem> nameDrawingItems = new List<NameDrawingItem>();
         int fpsCounter = 0;
         int lastFps = 0;
 
@@ -28,19 +38,24 @@ namespace FinanceCryptoCHRJ
         float velotry = 0;
         float maxVelotry = 2.7182818459f;
 
+        float absvel = 0;
+
+        bool requestBlask = false;
+
         Bitmap bg = Properties.Resources.chrj_bg1;
 
         private void renderTimer_Tick(object sender, EventArgs e)
         {
 
-
+            absvel = Math.Abs(velotry);
             DateTime now = DateTime.Now;
             Graphics canv = gdi.Graphics;
-            canv.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+            canv.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+            //canv.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             canv.Clear(Color.Transparent);
 
             #region Draw Names
-            canv.FillRectangle(Brushes.White, canvas.Left,canvas.Top, canvas.Width,canvas.Height);
+            canv.FillRectangle(Brushes.White, displayArea.Left,displayArea.Top, displayArea.Width,displayArea.Height);
             if (nameDrawingItems.Count > 0)
             {
                 float len = nameDrawingItems.Count;
@@ -55,6 +70,12 @@ namespace FinanceCryptoCHRJ
                 nameDrawingItems[leftPtr].draw(canv,position - (float)leftPtr);
                 nameDrawingItems[rightPtr].draw(canv,position - (rightPtr > 0 ? rightPtr : rightPtr+lenint));
 
+                canv.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+
+                canv.FillRectangle(Brushes.Transparent, 0, 0, displayArea.Left, Height);
+                canv.FillRectangle(Brushes.Transparent, displayArea.Right,0 , Width-displayArea.Right, Height);
+
+                canv.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
                 #region Physic Calculating
 
                 if (!isDragging)
@@ -74,8 +95,25 @@ namespace FinanceCryptoCHRJ
                         {
                             velotry = 0;
                         }
+                        else if (Math.Abs(velotry) > 0.038) {
+                            if (requestBlask)
+                            {
+                                velotry *= 0.88f;
+                                if (Math.Abs(velotry) < 0.05)
+                                {
+                                    requestBlask = false;
+                                }
+                            }
+                            velotry *= 0.985f;
+                        }
                     }
                     else {
+                        if (requestBlask) {
+                            velotry *= 0.88f;
+                            if (Math.Abs(velotry) < 0.05) {
+                                requestBlask = false;
+                            }
+                        }
                         velotry *= 0.985f;
                     }
                     position += velotry;
@@ -127,15 +165,55 @@ namespace FinanceCryptoCHRJ
 
             #endregion
 
+            btnFastRoll.Text = Math.Abs(velotry) < 0.05f ? "快速摇号" : "快速停止";
+
+            if (!mainRollClicking) { btnStickyRoll.Text = "炫迈摇号"; }
+
             #region Draw Form Controls
             canv.DrawImage(bg, 0, 0);
             canv.DrawString("FPS:" + lastFps, areaFPS.Font, Brushes.White, areaFPS.Location);
+            float calcWidth = (float)Math.Sqrt(Math.Abs(velotry) / maxVelotry) * (float)btnMainRoll.Width - 7;
+            if (calcWidth > btnMainRoll.Width) { calcWidth = btnMainRoll.Width; }
+            if (calcWidth < 0) { calcWidth = 0; }
+            canv.FillRectangle(alphaBackgroundBrush, btnMainRoll.Left, btnMainRoll.Top, calcWidth, btnMainRoll.Height);
+            canv.FillRectangle(alphaBackgroundBrush, selectionButtons[selecting].Left, selectionButtons[selecting].Top, selectionButtons[selecting].Width, selectionButtons[selecting].Height);
+            drawStringCenter(canv, btnMainRoll,white);
+            drawStringCenter(canv, btnSlot0,black);
+            drawStringCenter(canv, btnSlot1,black);
+            drawStringCenter(canv, btnSlot2,black);
+            drawStringCenter(canv, btnSlot3,black);
+            drawStringCenter(canv, btnSlot4,black);
+            drawStringCenter(canv, btnSlot5,black);
+            drawStringCenter(canv, btnSlot6,black);
+            drawStringCenter(canv, btnFastRoll, white);
+            drawStringCenter(canv, btnStickyRoll, white);
+            drawStringCenter(canv, btnSetting, white);
 
             #endregion
 
+            
+
+            if (chkHasBgm.Checked)
+            {
+                if (velotry > 0)
+                {
+                    beginMusic();
+                    bgmPlayer.Volume = ((float)Math.Sqrt(Math.Abs(velotry) / maxVelotry));
+                    int bgmPos = (int)(bgmPlayer.CurrentTime.TotalMilliseconds / 500 % 8);
+
+                    canv.FillRectangle(bgmEffect[bgmPos], displayArea.Left, displayArea.Top, displayArea.Width, displayArea.Height);
+                }
+                else {
+                    stopMusic();
+                }
+            }
+            else {
+                stopMusic();
+            }
+
             gdi.UpdateWindow();
 
-            
+
             fpsCounter++;
             if (now.Second != lastSecond) {
                 lastFps = fpsCounter;
@@ -147,10 +225,61 @@ namespace FinanceCryptoCHRJ
             
         }
 
+        void beginMusic() {
+            if (!bgmPlayer.IsPlaying) {
+                bgmPlayer.Play();
+            }
+        }
+
+        void stopMusic() {
+            if (bgmPlayer.IsPlaying) {
+                bgmPlayer.pause();
+            }
+        }
+
+        Brush alphaBackgroundBrush = new SolidBrush(Color.FromArgb(72, 0, 0, 0));
+        Brush white = Brushes.White;
+        Brush black = Brushes.Black;
+        
+
+        Brush[] bgmEffect = new Brush[] {
+            new SolidBrush(Color.FromArgb(64,255,0,0)),
+            new SolidBrush(Color.FromArgb(64,255,127,0)),
+            new SolidBrush(Color.FromArgb(64,255,255,0)),
+            new SolidBrush(Color.FromArgb(64,0,255,0)),
+            new SolidBrush(Color.FromArgb(64,0,255,255)),
+            new SolidBrush(Color.FromArgb(64,0,0,255)),
+            new SolidBrush(Color.FromArgb(64,127,0,255)),
+            new SolidBrush(Color.FromArgb(64,255,0,255))
+        };
+
+        void initDrawing() {
+            bg = new Bitmap(bg, this.Size);
+            centerFormat = new StringFormat(StringFormatFlags.NoWrap);
+            centerFormat.Alignment = StringAlignment.Center;
+            centerFormat.LineAlignment = StringAlignment.Center;
+            selectionButtons = new Button[] {
+                btnSlot0,
+                btnSlot1,
+                btnSlot2,
+                btnSlot3,
+                btnSlot4,
+                btnSlot5,
+                btnSlot6,
+            };
+            bgmPlayer = new BSoundPlayer("BGM45515.mp3");
+            bgmPlayer.advancedloop = true;
+            bgmPlayer.loopMilliTime = 45515;
+        }
+
+        StringFormat centerFormat;
+        void drawStringCenter(Graphics g,Control ctl,Brush color) {
+            g.DrawString(ctl.Text, ctl.Font, color, new RectangleF(ctl.Left, ctl.Top, ctl.Width, ctl.Height), centerFormat);
+        }
 
         bool isDragging = false;
 
-        class NameItem {
+        public class NameItem {
             public string name;
             public bool isDisabled;
 
@@ -159,9 +288,10 @@ namespace FinanceCryptoCHRJ
                 this.name = name;
                 this.isDisabled = isDisabled;
             }
+            public NameItem() { }
         }
 
-        class NameDrawingItem {
+        public class NameDrawingItem {
             public NameItem nameItem;
             Font drawingFont;
             PointF beginPoint;
@@ -208,29 +338,63 @@ namespace FinanceCryptoCHRJ
             }
         }
 
-        List<NameDrawingItem> nameDrawingItems = new List<NameDrawingItem>();
+        public class NameItemCollecton {
+            public string name;
+            public List<NameItem> items;
+        }
 
+        public class AppSettings {
+            public List<string> subpasswords = new List<string>();
+            public List<NameItemCollecton> nameListCollections = new List<NameItemCollecton>();
+        }
+
+
+        public static FinanceCrypto.CryptoObject cryptor = new FinanceCrypto.CryptoObject();
         public void initItems() {
+            bool loaded = false;
+            if (File.Exists(cfgPath))
+            {
+                try
+                {
+                    string rawdata = File.ReadAllText(cfgPath, Encoding.UTF8);
+                    cryptor.loadFromXml(rawdata);
+                    appSettings = JsonConvert.DeserializeObject<AppSettings>(cryptor.getData());
+                    loaded = true;
+                }
+                catch (Exception ex) {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
+            else {
+                loaded = false;
+            }
+            if (!loaded) {
+                MessageBox.Show("第一次使用请设定主密码");
+                string password = FrmInputPassword.CreatePassword(this);
+                cryptor.init(password);
+                appSettings = new AppSettings();
+                for (int i = 0; i < 7; i++) {
+                    NameItemCollecton nameItemCollection = new NameItemCollecton() { name = "未命名摇号", items = new List<NameItem>()};
+                    for (int j = 1; j <= 30; j++) {
+                        nameItemCollection.items.Add(new NameItem(j.ToString(), false));
+                    }
+                    appSettings.nameListCollections.Add(nameItemCollection);
+                }
+                string json = JsonConvert.SerializeObject(appSettings);
+                
+                cryptor.setData(json, password);
+                File.WriteAllText(cfgPath, cryptor.exportToXml(), Encoding.UTF8);
+            }
 
-            List<NameItem> nameItems = new List<NameItem>();
-            nameItems.Add(new NameItem("Name1", false));
-            nameItems.Add(new NameItem("Name2", false));
-            nameItems.Add(new NameItem("Name3", false));
-            nameItems.Add(new NameItem("Name4", false));
-            nameItems.Add(new NameItem("Name5", false));
-            nameItems.Add(new NameItem("Name6", false));
-            nameItems.Add(new NameItem("Name7", false));
-            nameItems.Add(new NameItem("Name8", false));
-            nameItems.Add(new NameItem("Name9", false));
-            nameItems.Add(new NameItem("Name10", true));
-
-            loadItems(nameItems);
-
+            loadItems(appSettings.nameListCollections[selecting].items);
+            
         }
 
         void loadItems(List<NameItem> nameItems) {
             nameDrawingItems.Clear();
-            nameItems.ForEach(i => nameDrawingItems.Add(new NameDrawingItem(i, gdi.Graphics, canvas.Left, canvas.Top, canvas.Width, canvas.Height)));
+            nameItems.ForEach(i => nameDrawingItems.Add(new NameDrawingItem(i, gdi.Graphics, displayArea.Left, displayArea.Top, displayArea.Width, displayArea.Height)));
+            velotry = 0;position = 0;
+            mainRollClicking = false;
         }
 
         protected override CreateParams CreateParams
@@ -248,28 +412,25 @@ namespace FinanceCryptoCHRJ
         private void Form1_Load(object sender, EventArgs e)
         {
             gdi = new MyGDIFramework.GdiSystem(this);
-            bg = new Bitmap(bg, this.Size);
+            initDrawing();
             initItems();
         }
-        
-        
 
+
+        #region Interactive
         bool mainRollClicking = false;
         private void btnMainRoll_MouseDown(object sender, MouseEventArgs e)
         {
             mainRollClicking = true;
+            btnMainRoll.Text = "松开停止摇号";
         }
 
         private void btnMainRoll_MouseUp(object sender, MouseEventArgs e)
         {
             mainRollClicking = false;
+            btnMainRoll.Text = "按住开始摇号";
         }
-
-        private void btnMainRoll_Click(object sender, EventArgs e)
-        {
-
-        }
-
+        
         private void button1_Click(object sender, EventArgs e)
         {
             Close();
@@ -311,7 +472,7 @@ namespace FinanceCryptoCHRJ
         private void canvas_MouseMove(object sender, MouseEventArgs e)
         {
             if (isDragging) {
-                deltaPosition = -(float)(e.Location.X - lastPoint.X) / (float)(canvas.Width);
+                deltaPosition = -(float)(e.Location.X - lastPoint.X) / (float)(displayArea.Width);
                 position += deltaPosition;
                 lastPoint = e.Location;
             }
@@ -327,7 +488,14 @@ namespace FinanceCryptoCHRJ
 
         private void label2_Click(object sender, EventArgs e)
         {
-            velotry = 1.5f + (float)rnd.NextDouble();
+            if (Math.Abs(velotry) < 0.05)
+            {
+                velotry = 1.5f + (float)rnd.NextDouble();
+            }
+            else {
+                requestBlask = true;
+                mainRollClicking = false;
+            }
         }
 
 
@@ -337,14 +505,14 @@ namespace FinanceCryptoCHRJ
                 int temptop = Top;
                 if (new Rectangle(Location, Size).Contains(MousePosition) || (velotry!=0 || position % 1 !=0))
                 {
-                    temptop = temptop + 10;
+                    temptop = temptop + 16;
                     if (temptop > 0)
                     {
                         temptop = 0;
                     }
                 }
                 else {
-                    temptop = temptop- 10;
+                    temptop = temptop- 16;
                     if (temptop < -Height + 1) {
                         temptop = -Height + 1;
                     }
@@ -352,7 +520,66 @@ namespace FinanceCryptoCHRJ
                 if (temptop != Top) {
                     Top=temptop; 
                 }
+                if (temptop == -Height + 1)
+                {
+                    renderTimer.Enabled = false;
+                }
+                else {
+                    renderTimer.Enabled = true;
+                }
             }
         }
+        
+        private void btnStickyRoll_Click(object sender, EventArgs e)
+        {
+            mainRollClicking = !mainRollClicking;
+            btnStickyRoll.Text = mainRollClicking ? "炫迈停止" : "炫迈摇号";
+        }
+
+        private void btnSlot0_Click(object sender, EventArgs e)
+        {
+            selecting = int.Parse(((Button)sender).Name.Replace("btnSlot", ""));
+            loadItems(appSettings.nameListCollections[selecting].items);
+        }
+
+        #endregion
+        
+
+        private void btnSetting_Click(object sender, EventArgs e)
+        {
+            string password = FrmInputPassword.Input(this, "请输入密码");
+            if (cryptor.verifyPassword(password))
+            {
+                openSetting(password);
+                return;
+            }
+            else {
+                password = testSubPassword(password);
+                if (password != "") {
+                    openSetting(password);
+                    return;
+                }
+            }
+            MessageBox.Show("密码错误");
+        }
+
+        string testSubPassword(string password) {
+            foreach(string subp in appSettings.subpasswords) {
+                try
+                {
+                    string mainpass = FinanceCrypto.CryptoHelper.AesDecrypt(subp, password);
+                    if (mainpass.StartsWith("MAINPASS")) {
+                        return mainpass.Substring(24);
+                    }
+                }
+                catch (Exception ex) { }
+            }
+            return "";
+        }
+
+        void openSetting(String password) {
+            new FrmEdit(password).ShowDialog();
+        }
     }
+
 }
