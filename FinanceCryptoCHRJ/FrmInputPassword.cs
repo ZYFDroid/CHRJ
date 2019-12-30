@@ -42,6 +42,7 @@ namespace FinanceCryptoCHRJ
             while (pw1 != pw2 || pw1.Length < 6) {
                 while (pw1.Length < 6) {
                     pw1 = Input(owner,"请设定密码");
+                    if (pw1.Length == 0) { return null; }
                     if (pw1.Length < 6) {
                         MessageBox.Show("密码长度不得少于6位");
                     }
@@ -49,6 +50,7 @@ namespace FinanceCryptoCHRJ
                 while (pw2.Length < 6)
                 {
                     pw2 = Input(owner, "请再次输入密码");
+                    if (pw2.Length == 0) { return null; }
                     if (pw2.Length < 6)
                     {
                         MessageBox.Show("密码长度不得少于6位");

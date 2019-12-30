@@ -33,14 +33,15 @@
             this.chkPy = new System.Windows.Forms.CheckBox();
             this.cmbSelection = new System.Windows.Forms.ComboBox();
             this.tblList = new System.Windows.Forms.DataGridView();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.btnBatchAdd = new System.Windows.Forms.Button();
             this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnPYJY = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.btnBatchAdd = new System.Windows.Forms.Button();
             this.btnClearSubpass = new System.Windows.Forms.Button();
             this.btnNewSubpass = new System.Windows.Forms.Button();
             this.btnTestSubpass = new System.Windows.Forms.Button();
             this.lblSubpassCount = new System.Windows.Forms.Label();
+            this.btnChpwd = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.tblList)).BeginInit();
             this.SuspendLayout();
             // 
@@ -92,26 +93,6 @@
             this.tblList.Size = new System.Drawing.Size(249, 237);
             this.tblList.TabIndex = 4;
             // 
-            // btnSave
-            // 
-            this.btnSave.Location = new System.Drawing.Point(86, 370);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(177, 23);
-            this.btnSave.TabIndex = 5;
-            this.btnSave.Text = "保存";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
-            // btnBatchAdd
-            // 
-            this.btnBatchAdd.Location = new System.Drawing.Point(14, 370);
-            this.btnBatchAdd.Name = "btnBatchAdd";
-            this.btnBatchAdd.Size = new System.Drawing.Size(66, 23);
-            this.btnBatchAdd.TabIndex = 6;
-            this.btnBatchAdd.Text = "批量添加";
-            this.btnBatchAdd.UseVisualStyleBackColor = true;
-            this.btnBatchAdd.Click += new System.EventHandler(this.btnBatchAdd_Click);
-            // 
             // ColumnName
             // 
             this.ColumnName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
@@ -133,6 +114,26 @@
             this.ColumnPYJY.Name = "ColumnPYJY";
             this.ColumnPYJY.TrueValue = "true";
             this.ColumnPYJY.Visible = false;
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(86, 370);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(177, 23);
+            this.btnSave.TabIndex = 5;
+            this.btnSave.Text = "保存";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // btnBatchAdd
+            // 
+            this.btnBatchAdd.Location = new System.Drawing.Point(14, 370);
+            this.btnBatchAdd.Name = "btnBatchAdd";
+            this.btnBatchAdd.Size = new System.Drawing.Size(66, 23);
+            this.btnBatchAdd.TabIndex = 6;
+            this.btnBatchAdd.Text = "批量添加";
+            this.btnBatchAdd.UseVisualStyleBackColor = true;
+            this.btnBatchAdd.Click += new System.EventHandler(this.btnBatchAdd_Click);
             // 
             // btnClearSubpass
             // 
@@ -169,16 +170,27 @@
             this.lblSubpassCount.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblSubpassCount.Location = new System.Drawing.Point(15, 13);
             this.lblSubpassCount.Name = "lblSubpassCount";
-            this.lblSubpassCount.Size = new System.Drawing.Size(248, 25);
+            this.lblSubpassCount.Size = new System.Drawing.Size(163, 25);
             this.lblSubpassCount.TabIndex = 8;
             this.lblSubpassCount.Text = "label2";
             this.lblSubpassCount.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // btnChpwd
+            // 
+            this.btnChpwd.Location = new System.Drawing.Point(185, 14);
+            this.btnChpwd.Name = "btnChpwd";
+            this.btnChpwd.Size = new System.Drawing.Size(78, 23);
+            this.btnChpwd.TabIndex = 9;
+            this.btnChpwd.Text = "修改密码";
+            this.btnChpwd.UseVisualStyleBackColor = true;
+            this.btnChpwd.Click += new System.EventHandler(this.btnChpwd_Click);
             // 
             // FrmEdit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(277, 405);
+            this.Controls.Add(this.btnChpwd);
             this.Controls.Add(this.lblSubpassCount);
             this.Controls.Add(this.btnNewSubpass);
             this.Controls.Add(this.btnTestSubpass);
@@ -220,5 +232,6 @@
         private System.Windows.Forms.Button btnNewSubpass;
         private System.Windows.Forms.Button btnTestSubpass;
         private System.Windows.Forms.Label lblSubpassCount;
+        private System.Windows.Forms.Button btnChpwd;
     }
 }

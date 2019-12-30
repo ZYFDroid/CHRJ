@@ -298,6 +298,9 @@ namespace FinanceCryptoCHRJ
             Font drawingFont;
             float areaWidth = 0;
             RectangleF drawingArea;
+            Brush drawingBrush = Brushes.Black;
+            PointF drawingPoint;
+
             StringFormat drawingFormat = new StringFormat(StringFormatFlags.NoWrap)
             {
                 Alignment = StringAlignment.Center,
@@ -307,7 +310,7 @@ namespace FinanceCryptoCHRJ
 
             public NameDrawingItem(NameItem nameItem,Graphics g,int left,int top,int width,int height)
             {
-
+                
                 this.nameItem = nameItem;
                 float beginFontSize = 50;
                 FontFamily usingFont = SystemFonts.DefaultFont.FontFamily;
@@ -341,14 +344,17 @@ namespace FinanceCryptoCHRJ
                     }
                 }
                 drawingFont = new Font(FontFamily.GenericSerif, beginFontSize);
+                float strHeight = g.MeasureString("永", drawingFont).Width;
                 areaWidth = width;
                 drawingArea = new RectangleF(0, top+14, width, height);
+                drawingPoint = new PointF(width / 2 - strSize.Width / 2 + left, height / 2 - strSize.Height / 2 + top+14/* Magic. Do not touch */);
             }
 
             public void draw(Graphics g, float offset) {
-                drawingArea.X = 0;
-                drawingArea.Offset(-areaWidth * offset, 0);
-                g.DrawString(nameItem.name, drawingFont, Brushes.Black, drawingArea, drawingFormat);
+                //drawingArea.X = 0;
+                //drawingArea.Offset(-areaWidth * offset, 0);
+                //g.DrawString(nameItem.name, drawingFont, Brushes.Black, drawingArea, drawingFormat);
+                g.DrawString(nameItem.name, drawingFont, drawingBrush, drawingPoint.X - areaWidth * offset, drawingPoint.Y);
             }
         }
 
@@ -385,6 +391,7 @@ namespace FinanceCryptoCHRJ
             if (!loaded) {
                 MessageBox.Show("第一次使用请设定主密码");
                 string password = FrmInputPassword.CreatePassword(this);
+                if (null == password) { Application.Exit(); return; }
                 cryptor.init(password);
                 appSettings = new AppSettings();
                 for (int i = 0; i < 7; i++) {

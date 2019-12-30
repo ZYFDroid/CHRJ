@@ -106,6 +106,7 @@ namespace FinanceCryptoCHRJ
             if (Form1.cryptor.verifyPassword(FrmInputPassword.Input(this, "请输入主密码")))
             {
                 string subpass = FrmInputPassword.CreatePassword(this);
+                if (null == subpass) { return; }
                 appSettingObject.subpasswords.Add(FinanceCrypto.CryptoHelper.AesEncrypt("MAINPASS" + FinanceCrypto.CryptoObject.randomMask() + savepassword, subpass));
             }
             else {
@@ -153,6 +154,23 @@ namespace FinanceCryptoCHRJ
                 catch (Exception ex) { }
             }
             return "";
+        }
+
+        private void btnChpwd_Click(object sender, EventArgs e)
+        {
+            if (Form1.cryptor.verifyPassword(FrmInputPassword.Input(this, "请输入旧密码")))
+            {
+                savepassword = FrmInputPassword.CreatePassword(this);
+                if (null == savepassword) { return; }
+                appSettingObject.subpasswords.Clear();
+                Form1.cryptor.init(savepassword);
+                Form1.cryptor.setData(JsonConvert.SerializeObject(appSettingObject), savepassword);
+            }
+            else
+            {
+                MessageBox.Show("主密码错误");
+            }
+            loadSubPass();
         }
     }
 }
