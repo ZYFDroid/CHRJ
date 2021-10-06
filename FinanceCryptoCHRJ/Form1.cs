@@ -269,7 +269,7 @@ namespace FinanceCryptoCHRJ
                 btnSlot5,
                 btnSlot6,
             };
-            bgmPlayer = new BSoundPlayer("BGM45515.mp3");
+            bgmPlayer = new BSoundPlayer(Path.Combine(Program.rootpath,"BGM45515.mp3"));
             bgmPlayer.advancedloop = true;
             bgmPlayer.loopMilliTime = 45515;
         }

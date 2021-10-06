@@ -60,7 +60,7 @@
             this.btnMainRoll.BackColor = System.Drawing.Color.Transparent;
             this.btnMainRoll.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.btnMainRoll.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnMainRoll.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnMainRoll.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnMainRoll.ForeColor = System.Drawing.Color.White;
             this.btnMainRoll.Location = new System.Drawing.Point(22, 210);
             this.btnMainRoll.Name = "btnMainRoll";
@@ -75,7 +75,7 @@
             // 
             this.btnFastRoll.BackColor = System.Drawing.Color.Transparent;
             this.btnFastRoll.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnFastRoll.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnFastRoll.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnFastRoll.ForeColor = System.Drawing.Color.White;
             this.btnFastRoll.Location = new System.Drawing.Point(292, 211);
             this.btnFastRoll.Name = "btnFastRoll";
@@ -89,7 +89,7 @@
             // 
             this.btnStickyRoll.BackColor = System.Drawing.Color.Transparent;
             this.btnStickyRoll.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnStickyRoll.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnStickyRoll.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnStickyRoll.ForeColor = System.Drawing.Color.White;
             this.btnStickyRoll.Location = new System.Drawing.Point(391, 211);
             this.btnStickyRoll.Name = "btnStickyRoll";
@@ -103,7 +103,7 @@
             // 
             this.btnSetting.BackColor = System.Drawing.Color.Transparent;
             this.btnSetting.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnSetting.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSetting.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSetting.ForeColor = System.Drawing.Color.White;
             this.btnSetting.Location = new System.Drawing.Point(492, 211);
             this.btnSetting.Name = "btnSetting";
@@ -238,7 +238,7 @@
             this.btnSecurityCheck,
             this.chkHasBgm});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(166, 120);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(166, 98);
             // 
             // btnRemoveCurrent
             // 
@@ -299,9 +299,9 @@
             // areaFPS
             // 
             this.areaFPS.AutoSize = true;
-            this.areaFPS.Location = new System.Drawing.Point(508, 16);
+            this.areaFPS.Location = new System.Drawing.Point(559, 270);
             this.areaFPS.Name = "areaFPS";
-            this.areaFPS.Size = new System.Drawing.Size(35, 13);
+            this.areaFPS.Size = new System.Drawing.Size(41, 12);
             this.areaFPS.TabIndex = 6;
             this.areaFPS.Text = "label1";
             // 
